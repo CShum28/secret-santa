@@ -4,7 +4,6 @@ const app = express();
 
 app.use(express.json());
 
-// post request to get Secret Santa List
 const helloWorld = require("./routes/helloWorld");
 const getSantaListById = require("./routes/getSantaListById");
 const insertSantaListGame = require("./routes/insertSantaListGame");
