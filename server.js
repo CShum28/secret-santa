@@ -6,9 +6,12 @@ app.use(express.json());
 
 // post request to get Secret Santa List
 const helloWorld = require("./routes/helloWorld");
-const getSecretSantaList = require("./routes/getSecretSantaList");
+const getSantaListById = require("./routes/getSantaListById");
+const insertSantaListGame = require("./routes/insertSantaListGame");
+
 app.use("/", helloWorld);
-app.use("/get-list", getSecretSantaList);
+app.use("/get-game", getSantaListById);
+app.use("/get-list", insertSantaListGame);
 
 app.listen(3000, () => {
   console.log("Server started on port 3000");
