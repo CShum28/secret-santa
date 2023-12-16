@@ -16,6 +16,7 @@ router.post("/", (req, res) => {
 
     randomSanta();
 
+    // check to ensure player does not get themselves
     while (santa === player) {
       // check to ensure if the last player gets themselves it does not infinite loop
       if (santas.length > 1) {
