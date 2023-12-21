@@ -6,6 +6,8 @@ router.post("/", (req, res) => {
   const players = req.body;
   const secret = [];
   for (let i = 0; i < players.length; i++) {
+    console.log("Player: ", players[i]);
+    console.log("Gifter:", players[i + 1]);
     if (players[i + 1]) {
       secret.push({ Recipient: players[i], Santa: players[i + 1] });
     } else {
@@ -17,7 +19,7 @@ router.post("/", (req, res) => {
     .then((results) => {
       console.log("Game has been added: ", results);
       console.log(results[0].game);
-      res.send(secretSantaAssignments);
+      res.send(results);
     })
     .catch((err) => {
       console.error(err);
