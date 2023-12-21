@@ -2,45 +2,46 @@ const express = require("express");
 const router = express.Router();
 const insertSecret = require("../db/queries/insertSecret");
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+    // console.log("ShuffleArray Function");
+    // console.log("Arr 1: ", array[i]);
+    // console.log("Arr 2: ", array[j]);
+    // console.log("--");
+  }
+}
+
+function generateSecretSantaAssignments(players) {
+  let shuffled;
+  do {
+    shuffled = [...players];
+    // console.log("##: ", shuffled);
+    shuffleArray(shuffled);
+    // console.log("post shuffle: ", shuffled);
+  } while (shuffled.some((player, idx) => player === players[idx]));
+
+  return players.map((player, idx) => ({
+    Recipient: player,
+    Santa: shuffled[idx],
+  }));
+}
+
 router.post("/", (req, res) => {
-  const secret = [];
-  let santas = [...req.body];
+  const players = req.body;
 
-  req.body.forEach((player) => {
-    let santa;
+  const secretSantaAssignments = generateSecretSantaAssignments(players);
 
-    // picks a random Santa for the player
-    const randomSanta = () => {
-      santa = santas[Math.floor(Math.random() * santas.length)];
-    };
-
-    randomSanta();
-
-    // check to ensure player does not get themselves
-    while (santa === player) {
-      // check to ensure if the last player gets themselves it does not infinite loop
-      if (santas.length > 1) {
-        randomSanta();
-      } else {
-        secret.push("The last player got themselves, please run again");
-        break;
-      }
-    }
-
-    // removes the Secret Santa santas after a Santa is picked
-    santas = santas.filter((player) => player !== santa);
-    let assignment = { Recipient: player, Santa: santa };
-    secret.push(assignment);
-  });
-
-  insertSecret([JSON.stringify(secret)])
+  insertSecret([JSON.stringify(secretSantaAssignments)])
     .then((results) => {
       console.log("Game has been added: ", results);
+      console.log(results[0].game);
+      res.send(secretSantaAssignments);
     })
-    .catch((err) => console.log(err));
-
-  console.log(secret);
-  res.send(secret);
+    .catch((err) => {
+      console.error(err);
+    });
 });
 
 module.exports = router;
